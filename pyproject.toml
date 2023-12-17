@@ -1,0 +1,87 @@
+[build-system]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+[project]
+name = "backports.asyncio.runner"
+version = "1.0.0"
+description = "Backport of asyncio.Runner, a context manager that controls event loop life cycle."
+license = { text = "PSF-2.0" }
+requires-python = ">=3.8,<3.12"
+authors = [
+    { name = "samypr100", email = "3933065+samypr100@users.noreply.github.com" },
+]
+keywords = [
+    "backports",
+    "backports.asyncio",
+    "backports.asyncio.Runner",
+    "asyncio",
+    "asyncio.Runner",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Python Software Foundation License",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+dynamic = ["readme"]
+
+[project.urls]
+Homepage = "https://github.com/samypr100/backports.asyncio.runner"
+Changelog = "https://github.com/samypr100/backports.asyncio.runner/blob/main/CHANGELOG.md"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src",
+    "tests",
+    "pyproject.toml",
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md",
+]
+
+[tool.hatch.build.targets.wheel]
+only-include = ["src"]
+sources = ["src"]
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+fragments = [
+    { path = "README.md" },
+    { path = "CHANGELOG.md" },
+]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["src"]
+
+[tool.coverage.report]
+fail_under = 80
+
+[tool.mypy]
+python_version = "3.8"
+mypy_path = "src"
+strict = true
+warn_unreachable = true
+implicit_reexport = true
+show_error_codes = true
+show_column_numbers = true
+ignore_missing_imports = true
+disallow_any_generics = false
+
+[tool.ruff]
+target-version = "py38"
+line-length = 88
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
