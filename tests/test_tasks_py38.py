@@ -39,6 +39,7 @@ class TestCaseWithDefaultExecutor(test_utils.TestCase):
     Backport: Patched from https://github.com/python/cpython/issues/78218
     Backport: See relevant PR https://github.com/python/cpython/pull/16284
     """
+
     @staticmethod
     def close_loop(loop):
         if loop._default_executor is not None:
@@ -60,10 +61,12 @@ class TestCaseWithDefaultExecutor(test_utils.TestCase):
                     for thread in threads:
                         thread.join()
 
+
 # Backport: Patched from https://github.com/python/cpython/issues/78218
 # Backport: See relevant PR https://github.com/python/cpython/pull/16284
 # Patch test_utils.TestCase to use our backport of _shutdown_default_executor
 test_utils.TestCase = TestCaseWithDefaultExecutor
+
 
 def tearDownModule():
     asyncio.set_event_loop_policy(None)
@@ -3347,8 +3350,7 @@ class RunCoroutineThreadsafeTests(test_utils.TestCase):
         # Set corrupted task factory
         # Backport Note: Patched from https://github.com/python/cpython/issues/78218
         # Backport Note: See relevant PR https://github.com/python/cpython/pull/16284
-        self.addCleanup(self.loop.set_task_factory,
-                        self.loop.get_task_factory())
+        self.addCleanup(self.loop.set_task_factory, self.loop.get_task_factory())
         self.loop.set_task_factory(task_factory)
 
         # Run event loop
