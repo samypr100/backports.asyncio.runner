@@ -5,6 +5,7 @@
 # test_task_source_traceback tests are skipped as sources are not the same.
 # Mentions of tasks._PyTask is replaced with PatchedTask
 # Mentions of asyncio.Task is replaced with PatchedTask
+# issubclass against asyncio.Task replaced with more explicit _PyTask/_PyFuture
 
 import collections
 import contextlib

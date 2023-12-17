@@ -1,3 +1,4 @@
+"""Backported implementation of asyncio.Runner from 3.11 compatible down to Python 3.8."""
 import asyncio
 import asyncio.tasks
 import contextvars
@@ -10,7 +11,7 @@ from asyncio import coroutines, events, tasks, exceptions, AbstractEventLoop
 from contextvars import Context
 from types import TracebackType, FrameType
 from typing import Callable, Coroutine, TypeVar, Any, Optional, Type, final
-from unittest.mock import patch
+from unittest.mock import patch  # Used by backport to avoid global changes
 
 from .tasks import Task
 
@@ -89,6 +90,7 @@ class Runner:
             loop = self._loop
             _cancel_all_tasks(loop)
             loop.run_until_complete(loop.shutdown_asyncgens())
+            # Backport Patch
             if sys.version_info >= (3, 9):
                 loop.run_until_complete(loop.shutdown_default_executor())
             else:
@@ -123,7 +125,8 @@ class Runner:
         if context is None:
             context = self._context
 
-        # <= 3.11 does not have create_task with context parameter:
+        # Backport Patch: <= 3.11 does not have create_task with context parameter
+        # Reader note: context.run will not work here as it does not match how asyncio.Runner retains context
         with patch.object(asyncio.tasks, "Task", Task):
             with patch.object(contextvars, "copy_context", lambda: context):
                 task = self._loop.create_task(coro)
@@ -223,6 +226,7 @@ async def _shutdown_default_executor(loop: AbstractEventLoop) -> None:
     if loop._default_executor is None:  # type: ignore[attr-defined]
         return
     future = loop.create_future()
+    # Backport modified to include send loop to _do_shutdown
     thread = threading.Thread(target=_do_shutdown, args=(loop, future))
     thread.start()
     try:

@@ -2,6 +2,7 @@
 
 * Add `uvloop` example to README.md
 * Improved tests coverage.
+* Improved modified code documentation.
 
 # 1.0.1
 

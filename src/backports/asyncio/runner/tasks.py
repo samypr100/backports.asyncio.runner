@@ -1,31 +1,4 @@
-"""
-We must override asyncio.tasks._PyTask to be able to patch some behavior in Python < 3.11 and allow
-this backport to function. C-impl of the API is not in scope of this backport at this time.
-
-In order to support this backport, we had to introduce some changes to asyncio.Task available in 3.11:
-
-    1. contextvars.copy_context behavior change on __init__.
-    2. _num_cancels_requested attribute
-    3. cancelling() function
-    4. uncancel() function
-
-All of these are implemented in [CTask](https://github.com/python/cpython/blob/3.11/Modules/_asynciomodule.c)
-as well, but the C implementations were not backported. Trying to provide 1-1 Task implementation in this
-backport to Python 3.11 is not in scope and not needed.
-
-For #1, since we can't mimic how `contextvars.copy_context` is used in Python 3.11 in the new __init__:
-
-```
-    if context is None:
-        self._context = contextvars.copy_context()
-    else:
-        self._context = context
-```
-
-We mimic these in `Runner.run` by patching `contextvars.copy_context` temporarily to return
-our copied context instead. This assures the contextvars are preserved when the runner runs.
-
-"""
+"""Minimal backported implementation of asyncio._PyTask from 3.11 compatible down to Python 3.8."""
 import asyncio.tasks
 import sys
 from asyncio import AbstractEventLoop
@@ -49,7 +22,7 @@ class Task(asyncio.tasks._PyTask):  # type: ignore[name-defined, misc]
     ) -> None:
         self._num_cancels_requested = 0
         # https://github.com/python/cpython/blob/3.11/Modules/_asynciomodule.c#L2026
-        # self._context is patched in Runner.run() instead.
+        # Backport Note: self._context is temporarily patched in Runner.run() instead.
         super().__init__(coro, loop=loop, name=name)
 
     def cancel(self, msg: Optional[str] = None) -> bool:
