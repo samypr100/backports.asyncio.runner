@@ -45,6 +45,28 @@ with Runner() as runner:
 # Hello World
 ```
 
+## uvloop
+
+This backport is also compatible with [uvloop](https://github.com/MagicStack/uvloop). An example is below:
+
+```python
+import sys
+import uvloop
+
+if sys.version_info < (3, 11):
+    from backports.asyncio.runner import Runner
+else:
+    from asyncio import Runner
+
+async def echo(msg: str) -> None:
+    print(f"Hello {msg}")
+
+with Runner(loop_factory=uvloop.new_event_loop) as runner:
+    runner.run(echo("World"))
+
+# Hello World
+```
+
 ## Contributing
 
 Feel free to open a PR if there's changes you'd like to make as long as the changes maintain full reference implementation
@@ -83,5 +105,5 @@ testing suite of this package to make sure all changes to `asyncio.Task` used by
 `asyncio.Task`. Important Note: `asyncio.Task` is **only** patched on the `Runner`, not globally, hence there should be
 no side effects to external code when using this module.
 
-Currently, a backport of `_CTask` is not provided on this package and not in scope at this time. This means that there's a likely
-a slight performance degradation when using this `asyncio.Runner` implementation over the one in Python 3.11 or above.
+Currently, a backport of `_CTask` is not provided on this package and not in scope at this time. This means that there's a slight
+performance degradation when using this `asyncio.Runner` implementation over the one in Python 3.11 or above.
