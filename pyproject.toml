@@ -65,7 +65,7 @@ parallel = true
 source = ["src"]
 
 [tool.coverage.report]
-fail_under = 80
+fail_under = 85
 
 [tool.mypy]
 python_version = "3.8"

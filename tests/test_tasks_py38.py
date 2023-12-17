@@ -30,7 +30,39 @@ from test import support
 from test.support.script_helper import assert_python_ok
 
 from backports.asyncio.runner.tasks import Task as PatchedTask
+from backports.asyncio.runner.runner import _shutdown_default_executor  # type: ignore
 
+
+class TestCaseWithDefaultExecutor(test_utils.TestCase):
+    """Modified test_utils.TestCase to use our backport _shutdown_default_executor for testing purposes.
+    Backport: Patched from https://github.com/python/cpython/issues/78218
+    Backport: See relevant PR https://github.com/python/cpython/pull/16284
+    """
+    @staticmethod
+    def close_loop(loop):
+        if loop._default_executor is not None:
+            if not loop.is_closed():
+                loop.run_until_complete(_shutdown_default_executor(loop))
+            else:
+                loop._default_executor.shutdown(wait=True)
+        loop.close()
+        policy = support.maybe_get_event_loop_policy()
+        if policy is not None:
+            try:
+                watcher = policy.get_child_watcher()
+            except NotImplementedError:
+                # watcher is not implemented by EventLoopPolicy, e.g. Windows
+                pass
+            else:
+                if isinstance(watcher, asyncio.ThreadedChildWatcher):
+                    threads = list(watcher._threads.values())
+                    for thread in threads:
+                        thread.join()
+
+# Backport: Patched from https://github.com/python/cpython/issues/78218
+# Backport: See relevant PR https://github.com/python/cpython/pull/16284
+# Patch test_utils.TestCase to use our backport of _shutdown_default_executor
+test_utils.TestCase = TestCaseWithDefaultExecutor
 
 def tearDownModule():
     asyncio.set_event_loop_policy(None)
@@ -3312,6 +3344,10 @@ class RunCoroutineThreadsafeTests(test_utils.TestCase):
         self.loop.set_exception_handler(callback)
 
         # Set corrupted task factory
+        # Backport Note: Patched from https://github.com/python/cpython/issues/78218
+        # Backport Note: See relevant PR https://github.com/python/cpython/pull/16284
+        self.addCleanup(self.loop.set_task_factory,
+                        self.loop.get_task_factory())
         self.loop.set_task_factory(task_factory)
 
         # Run event loop
