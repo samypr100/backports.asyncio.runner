@@ -94,9 +94,21 @@ jobs:
       - name: Output Coverage
         run: echo "COVERAGE_JSON=$(jq -c . < coverage.json)" >> $GITHUB_ENV
       - name: Get Coverage Totals
-        run: echo "COVERAGE_TOTAL=${{ fromJson(env.COVERAGE_JSON).totals.percent_covered_display }}" >> $GITHUB_ENV
+        id: coverage-total
+        run: echo "coverage_total=${{ fromJson(env.COVERAGE_JSON).totals.percent_covered_display }}" >> $GITHUB_OUTPUT
+    outputs:
+      coverage_total: ${{ steps.coverage-total.outputs.coverage_total }}
+
+  coverage-badge:
+    runs-on: ubuntu-latest
+    needs:
+      - coverage
+    if: github.ref == 'refs/heads/main'
+    environment: release
+    env:
+      COVERAGE_TOTAL: ${{ needs.coverage.outputs.coverage_total }}
+    steps:
       - name: Create Coverage Badge
-        if: github.ref == 'refs/heads/main'
         uses: schneegans/dynamic-badges-action@v1.7.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
