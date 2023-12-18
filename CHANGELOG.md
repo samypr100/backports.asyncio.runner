@@ -1,4 +1,4 @@
-# Unrelease
+# 1.0.2
 
 * Add `uvloop` example to README.md
 * Improved tests coverage.
