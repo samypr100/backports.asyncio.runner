@@ -1,4 +1,5 @@
 """Backported implementation of asyncio.Runner from 3.11 compatible down to Python 3.8."""
+
 import asyncio
 import asyncio.tasks
 import contextvars
@@ -13,6 +14,7 @@ from types import TracebackType, FrameType
 from typing import Callable, Coroutine, TypeVar, Any, Optional, Type, final
 from unittest.mock import patch  # Used by backport to avoid global changes
 
+from .patch import patch_object
 from .tasks import Task
 
 # See https://github.com/python/cpython/blob/3.11/Lib/asyncio/runners.py
@@ -127,8 +129,10 @@ class Runner:
 
         # Backport Patch: <= 3.11 does not have create_task with context parameter
         # Reader note: context.run will not work here as it does not match how asyncio.Runner retains context
-        with patch.object(asyncio.tasks, "Task", Task):
-            with patch.object(contextvars, "copy_context", lambda: context):
+        with patch_object(asyncio.tasks, asyncio.tasks.Task.__name__, Task):
+            with patch_object(
+                contextvars, contextvars.copy_context.__name__, lambda: context
+            ):
                 task = self._loop.create_task(coro)
 
         if (
