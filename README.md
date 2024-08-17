@@ -4,6 +4,7 @@
 [![GitHub Actions][github-actions-badge]](https://github.com/samypr100/backports.asyncio.runner/actions/workflows/main.yml)
 [![Hatch][hatch-badge]](https://github.com/pypa/hatch)
 [![Ruff][ruff-badge]](https://github.com/astral-sh/ruff)
+[![Uv][uv-badge]](https://github.com/astral-sh/uv)
 [![Type checked with mypy][mypy-badge]](https://mypy-lang.org)
 [![Coverage][coverage-badge]](https://coverage.readthedocs.io)
 
@@ -11,6 +12,7 @@
 [github-actions-badge]: https://github.com/samypr100/backports.asyncio.runner/actions/workflows/main.yml/badge.svg
 [hatch-badge]: https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg
 [ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+[uv-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json
 [mypy-badge]: https://www.mypy-lang.org/static/mypy_badge.svg
 [coverage-badge]: https://gist.githubusercontent.com/samypr100/8682bd2df950670a45095c7c109a176e/raw/coverage.svg
 
@@ -74,12 +76,12 @@ with Python 3.11's implementation of `asyncio.Runner`. More documentation and ad
 test don't seem to provide 100% coverage at a glance or more likely I may have missed including some tests.
 
 * [ruff](https://github.com/astral-sh/ruff) is used to format the code via `ruff format`.
-    * To quickly run ruff, make sure `pipx` is installed an run `pipx run ruff==0.1.8 format src tests`
+    * To quickly run ruff, make sure `pipx` is installed an run `pipx run ruff==0.6.1 format src tests`
 * [mypy](https://github.com/python/mypy) is used to check types in the sources (while attempting to stay true to reference implementation).
-    * To quickly run mypy, make sure `pipx` is installed an run `pipx run mypy==1.7.1 src`
+    * To quickly run mypy, make sure `pipx` is installed an run `pipx run mypy==1.11.1 src`
 * To run tests use `python -m unittest discover -s tests`.
 * To gather coverage:
-  * Install coverage: `python -m pip install "coverage[toml]==7.3.3"`
+  * Install coverage: `python -m pip install "coverage[toml]==7.6.1"`
   * Run it: `coverage run -m unittest discover -s tests`
 
 Relevant reference implementation sources:
