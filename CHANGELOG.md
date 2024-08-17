@@ -1,3 +1,9 @@
+# 1.1.0
+
+* Add basic `noxfile` with uv backend.
+* Simplified patching implementation.
+* Test dependency updates.
+
 # 1.0.2
 
 * Add `uvloop` example to README.md
