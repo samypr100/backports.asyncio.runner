@@ -76,13 +76,15 @@ with Python 3.11's implementation of `asyncio.Runner`. More documentation and ad
 test don't seem to provide 100% coverage at a glance or more likely I may have missed including some tests.
 
 * [ruff](https://github.com/astral-sh/ruff) is used to format the code via `ruff format`.
-    * To quickly run ruff, make sure `pipx` is installed an run `pipx run ruff==0.6.1 format src tests`
+    * To run ruff, make sure `uv` is installed and run `uv run ruff format src tests`
+    * To run ruff on applicable python versions, run `uv run nox -rs fmt`
 * [mypy](https://github.com/python/mypy) is used to check types in the sources (while attempting to stay true to reference implementation).
-    * To quickly run mypy, make sure `pipx` is installed an run `pipx run mypy==1.11.1 src`
-* To run tests use `python -m unittest discover -s tests`.
-* To gather coverage:
-  * Install coverage: `python -m pip install "coverage[toml]==7.6.1"`
-  * Run it: `coverage run -m unittest discover -s tests`
+    * To run mypy, make sure `uv` is installed and run `uv run mypy src`
+    * To run mypy on applicable python versions, run `uv run nox -rs ty`
+* To run tests use `uv run python -m unittest discover -s tests`
+  * For applicable python versions `uv run nox -rs tests`
+* To gather coverage use `uv run coverage run -m unittest discover -s tests`
+  * For applicable python versions `uv run nox -rs tests -- --cov`
 
 Relevant reference implementation sources:
 * https://github.com/python/cpython/blob/3.11/Lib/asyncio/runners.py

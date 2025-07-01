@@ -12,7 +12,6 @@ from asyncio import coroutines, events, tasks, exceptions, AbstractEventLoop
 from contextvars import Context
 from types import TracebackType, FrameType
 from typing import Callable, Coroutine, TypeVar, Any, Optional, Type, final
-from unittest.mock import patch  # Used by backport to avoid global changes
 
 from .patch import patch_object
 from .tasks import Task

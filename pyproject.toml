@@ -34,9 +34,19 @@ classifiers = [
 dependencies = []
 dynamic = ["readme"]
 
+[dependency-groups]
+dev = ["nox~=2025.5.1"]
+lint = ["ruff>=0.12,<0.13"]
+typing = ["mypy~=1.14"]
+coverage = ["coverage[toml]~=7.6"]
+test = ["pytest~=8.3", {include-group = "coverage"}]
+
 [project.urls]
 Homepage = "https://github.com/samypr100/backports.asyncio.runner"
 Changelog = "https://github.com/samypr100/backports.asyncio.runner/blob/main/CHANGELOG.md"
+
+[tool.uv]
+default-groups = "all"
 
 [tool.hatch.build.targets.sdist]
 include = [

@@ -432,9 +432,7 @@ class BaseTaskTests:
         # function, as expected, and have a qualified name (__qualname__
         # attribute).
         coro_name = "notmuch"
-        coro_qualname = (
-            "BaseTaskTests.test_task_repr_coro_decorator" ".<locals>.notmuch"
-        )
+        coro_qualname = "BaseTaskTests.test_task_repr_coro_decorator.<locals>.notmuch"
         self.assertEqual(gen.__name__, coro_name)
         self.assertEqual(gen.__qualname__, coro_qualname)
 

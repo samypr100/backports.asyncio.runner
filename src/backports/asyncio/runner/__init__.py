@@ -2,7 +2,7 @@
 
 Below is a quick summary of the changes.
 
-asyncio.tasks._PyTask was overriden to be able to patch some behavior in Python < 3.11 and allow
+asyncio.tasks._PyTask was overridden to be able to patch some behavior in Python < 3.11 and allow
 this backport to function. _CTask implementation of the API is not in scope of this backport at this time.
 
 The list of minimal changes backported are the following:

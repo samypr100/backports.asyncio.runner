@@ -5,7 +5,6 @@ import re
 import signal
 import threading
 import unittest
-import warnings
 from asyncio import AbstractEventLoop, Future, Task
 from typing import Callable, Optional
 from unittest import mock

@@ -446,9 +446,7 @@ class BaseTaskTests:
         # function, as expected, and have a qualified name (__qualname__
         # attribute).
         coro_name = "notmuch"
-        coro_qualname = (
-            "BaseTaskTests.test_task_repr_coro_decorator" ".<locals>.notmuch"
-        )
+        coro_qualname = "BaseTaskTests.test_task_repr_coro_decorator.<locals>.notmuch"
         self.assertEqual(gen.__name__, coro_name)
         self.assertEqual(gen.__qualname__, coro_qualname)
 
@@ -2297,7 +2295,7 @@ class BaseTaskTests:
                     # The exact traceback seems to vary in CI.
                     self.assertIn(depth, (2, 3))
                 else:
-                    self.fail("gather did not propagate the cancellation " "request")
+                    self.fail("gather did not propagate the cancellation request")
 
     def test_exception_traceback(self):
         # See http://bugs.python.org/issue28843
