@@ -22,6 +22,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
+from ._int_to_enum import _orig_int_to_enum, _patched_int_to_enum
 from ._patch import _patch_object
 from .tasks import Task
 
@@ -116,6 +117,9 @@ class Runner:
             loop.close()
             self._loop = None
             self._state = _State.CLOSED
+            # See https://github.com/python/cpython/pull/113444
+            # Reverts signal._int_to_enum patch
+            signal._int_to_enum = _orig_int_to_enum  # type: ignore[attr-defined]
 
     def get_loop(self) -> AbstractEventLoop:
         """Return embedded event loop."""
@@ -187,6 +191,10 @@ class Runner:
             raise RuntimeError("Runner is closed")
         if self._state is _State.INITIALIZED:
             return
+        # See https://github.com/python/cpython/pull/113444
+        # Patches signal._int_to_enum temporarily
+        signal._int_to_enum = _patched_int_to_enum  # type: ignore[attr-defined]
+        # Continue original implementation
         if self._loop_factory is None:
             self._loop = events.new_event_loop()
             if not self._set_event_loop:
