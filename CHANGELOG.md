@@ -1,3 +1,9 @@
+# 1.2.0
+
+* Backport bug fix for https://github.com/python/cpython/issues/112559
+* Declare `patch` and `patch.patch_object` as internal.
+* Improved `runner.py` typedefs.
+
 # 1.1.0
 
 * Add basic `noxfile` with uv backend.
