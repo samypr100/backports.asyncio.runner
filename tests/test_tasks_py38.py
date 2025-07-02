@@ -7,6 +7,7 @@
 # Mentions of asyncio.Task is replaced with PatchedTask
 # issubclass against asyncio.Task replaced with more explicit _PyTask/_PyFuture
 
+import asyncio
 import collections
 import contextlib
 import contextvars
@@ -20,18 +21,14 @@ import textwrap
 import types
 import unittest
 import weakref
-from unittest import mock
-
-import asyncio
-from asyncio import coroutines
-from asyncio import futures
-from asyncio import tasks
-from test.test_asyncio import utils as test_utils
+from asyncio import coroutines, futures, tasks
 from test import support
 from test.support.script_helper import assert_python_ok
+from test.test_asyncio import utils as test_utils
+from unittest import mock
 
-from backports.asyncio.runner.tasks import Task as PatchedTask
 from backports.asyncio.runner.runner import _shutdown_default_executor  # type: ignore
+from backports.asyncio.runner.tasks import Task as PatchedTask
 
 
 class TestCaseWithDefaultExecutor(test_utils.TestCase):

@@ -7,6 +7,7 @@
 # Mentions of asyncio.Task is replaced with PatchedTask
 # issubclass against asyncio.Task replaced with more explicit _PyTask/_PyFuture
 
+import asyncio
 import collections
 import contextlib
 import contextvars
@@ -21,18 +22,11 @@ import traceback
 import types
 import unittest
 import weakref
-from unittest import mock
-
-if sys.version_info >= (3, 9):
-    from types import GenericAlias
-
-import asyncio
-from asyncio import coroutines
-from asyncio import futures
-from asyncio import tasks
-from test.test_asyncio import utils as test_utils
+from asyncio import coroutines, futures, tasks
 from test import support
 from test.support.script_helper import assert_python_ok
+from test.test_asyncio import utils as test_utils
+from unittest import mock
 
 from backports.asyncio.runner.tasks import Task as PatchedTask
 
@@ -135,7 +129,7 @@ class BaseTaskTests:
     def test_generic_alias(self):
         task = self.__class__.Task[str]
         self.assertEqual(task.__args__, (str,))
-        self.assertIsInstance(task, GenericAlias)
+        self.assertIsInstance(task, types.GenericAlias)
 
     def test_task_cancel_message_getter(self):
         async def coro():

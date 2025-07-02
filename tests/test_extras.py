@@ -13,7 +13,6 @@ from backports.asyncio.runner import Runner
 from backports.asyncio.runner.runner import _cancel_all_tasks  # type: ignore[attr-defined]
 from backports.asyncio.runner.runner import _shutdown_default_executor  # type: ignore[attr-defined]
 
-
 T = TypeVar("T")
 
 
