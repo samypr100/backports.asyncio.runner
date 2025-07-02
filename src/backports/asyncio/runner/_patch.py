@@ -5,7 +5,7 @@ _T = TypeVar("_T")
 
 
 @contextmanager
-def patch_object(target: Any, attribute: str, new: _T) -> Iterator[None]:
+def _patch_object(target: Any, attribute: str, new: _T) -> Iterator[None]:
     """A basic version of unittest.mock patch.object."""
     # https://github.com/python/cpython/blob/3.8/Lib/unittest/mock.py#L1358
     temp_original = getattr(target, attribute)
