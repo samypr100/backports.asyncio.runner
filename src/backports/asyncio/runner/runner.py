@@ -11,13 +11,26 @@ import threading
 from asyncio import coroutines, events, tasks, exceptions, AbstractEventLoop
 from contextvars import Context
 from types import TracebackType, FrameType
-from typing import Callable, Coroutine, TypeVar, Any, Optional, Type, final
+from typing import (
+    Callable,
+    Coroutine,
+    TypeVar,
+    Any,
+    Optional,
+    Type,
+    final,
+    TYPE_CHECKING,
+)
 
 from .patch import patch_object
 from .tasks import Task
 
 # See https://github.com/python/cpython/blob/3.11/Lib/asyncio/runners.py
 
+if TYPE_CHECKING:  # pragma: no cover
+    from signal import _HANDLER
+
+__all__ = ("Runner",)
 
 _T = TypeVar("_T")
 
@@ -88,7 +101,8 @@ class Runner:
         if self._state is not _State.INITIALIZED:
             return
         try:
-            loop = self._loop
+            # TYPING: self._loop should not be None
+            loop: AbstractEventLoop = self._loop  # type: ignore[assignment]
             _cancel_all_tasks(loop)
             loop.run_until_complete(loop.shutdown_asyncgens())
             # Backport Patch
@@ -106,7 +120,8 @@ class Runner:
     def get_loop(self) -> AbstractEventLoop:
         """Return embedded event loop."""
         self._lazy_init()
-        return self._loop
+        # TYPING: self._loop should not be None
+        return self._loop  # type: ignore[return-value]
 
     def run(
         self, coro: Coroutine[Any, Any, _T], *, context: Optional[Context] = None
@@ -132,13 +147,15 @@ class Runner:
             with patch_object(
                 contextvars, contextvars.copy_context.__name__, lambda: context
             ):
-                task = self._loop.create_task(coro)
+                task = self._loop.create_task(coro)  # type: ignore[union-attr]
 
         if (
             threading.current_thread() is threading.main_thread()
             and signal.getsignal(signal.SIGINT) is signal.default_int_handler
         ):
-            sigint_handler = functools.partial(self._on_sigint, main_task=task)
+            sigint_handler: "_HANDLER" = functools.partial(
+                self._on_sigint, main_task=task
+            )
             try:
                 signal.signal(signal.SIGINT, sigint_handler)
             except ValueError:
@@ -151,7 +168,7 @@ class Runner:
 
         self._interrupt_count = 0
         try:
-            return self._loop.run_until_complete(task)
+            return self._loop.run_until_complete(task)  # type: ignore[union-attr, no-any-return]
         except exceptions.CancelledError:
             if self._interrupt_count > 0:
                 uncancel = getattr(task, "uncancel", None)
@@ -181,17 +198,18 @@ class Runner:
             self._loop = self._loop_factory()
         if self._debug is not None:
             self._loop.set_debug(self._debug)
-        self._context = contextvars.copy_context()
+        self._context = contextvars.copy_context()  # type: ignore[assignment]
         self._state = _State.INITIALIZED
 
     def _on_sigint(
         self, signum: int, frame: Optional[FrameType], main_task: asyncio.Task
     ) -> None:
+        # TYPING: self._loop should not be None
         self._interrupt_count += 1
         if self._interrupt_count == 1 and not main_task.done():
             main_task.cancel()
             # wakeup loop if it is blocked by select() with long timeout
-            self._loop.call_soon_threadsafe(lambda: None)
+            self._loop.call_soon_threadsafe(lambda: None)  # type: ignore[union-attr]
             return
         raise KeyboardInterrupt()
 
@@ -225,7 +243,8 @@ def _cancel_all_tasks(loop: AbstractEventLoop) -> None:
 
 async def _shutdown_default_executor(loop: AbstractEventLoop) -> None:
     """Schedule the shutdown of the default executor."""
-    loop._executor_shutdown_called = True
+    # TYPING: Both _executor_shutdown_called and _default_executor are expected private properties of BaseEventLoop
+    loop._executor_shutdown_called = True  # type: ignore[attr-defined]
     if loop._default_executor is None:  # type: ignore[attr-defined]
         return
     future = loop.create_future()
